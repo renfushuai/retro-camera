@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-handwritten: "Patrick Hand", cursive;
+  --color-retro-bg: #f4f1ea;
+  --color-retro-camera: #333333;
+  --color-retro-accent: #d9534f;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-handwritten);
+  background-color: var(--color-retro-bg);
+  overflow: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
