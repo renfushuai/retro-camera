@@ -3,7 +3,7 @@ import Photo from './Photo';
 import { generateId } from '../utils/id';
 import { generateCaption } from '../utils/gemini';
 
-const Camera = ({ onPhotoEjected, onCapture, apiKey, onCaptionGenerated }) => {
+const Camera = ({ onPhotoEjected, onCapture, apiKey, onCaptionGenerated, isMobile = false }) => {
     const videoRef = useRef(null);
     const [ejectingPhoto, setEjectingPhoto] = useState(null);
     const [flash, setFlash] = useState(false);
@@ -14,7 +14,11 @@ const Camera = ({ onPhotoEjected, onCapture, apiKey, onCaptionGenerated }) => {
         try {
             setError(null);
             const s = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: "user", width: 450, height: 450 }
+                video: {
+                    facingMode: isMobile ? "environment" : "user", // Rear camera on mobile
+                    width: isMobile ? { ideal: 1920 } : 450,
+                    height: isMobile ? { ideal: 1080 } : 450
+                }
             });
             setStream(s);
             if (videoRef.current) {
@@ -34,7 +38,7 @@ const Camera = ({ onPhotoEjected, onCapture, apiKey, onCaptionGenerated }) => {
                 stream.getTracks().forEach(track => track.stop());
             }
         };
-    }, []);
+    }, [isMobile]);
 
     const takePhoto = async () => {
         console.log("Shutter clicked!");
@@ -133,8 +137,11 @@ const Camera = ({ onPhotoEjected, onCapture, apiKey, onCaptionGenerated }) => {
         }
     };
 
+    const cameraSize = isMobile ? 'w-[90vw] max-w-[500px] h-[90vw] max-w-[500px]' : 'w-[450px] h-[450px]';
+    const cameraPosition = isMobile ? 'bottom-4 left-1/2 -translate-x-1/2' : 'bottom-16 left-16';
+
     return (
-        <div className="fixed bottom-16 left-16 w-[450px] h-[450px] z-20 select-none">
+        <div className={`fixed ${cameraPosition} ${cameraSize} z-20 select-none`}>
             {/* Flash Overlay */}
             {flash && <div className="fixed inset-0 bg-white z-50 opacity-50 pointer-events-none" />}
 
@@ -163,7 +170,7 @@ const Camera = ({ onPhotoEjected, onCapture, apiKey, onCaptionGenerated }) => {
             />
 
             {/* Viewfinder Video */}
-            <div className="absolute bottom-[32%] left-[62%] -translate-x-1/2 w-[27%] h-[27%] rounded-full overflow-hidden z-30 bg-black border-4 border-gray-800">
+            <div className="absolute bottom-[32%] left-[62%] -translate-x-1/2 w-[27%] h-[27%] rounded-full overflow-hidden z- bg-black border-4 border-gray-800">
                 <video
                     ref={videoRef}
                     autoPlay
@@ -194,7 +201,7 @@ const Camera = ({ onPhotoEjected, onCapture, apiKey, onCaptionGenerated }) => {
 
             {/* Shutter Button */}
             <button
-                className="absolute bottom-[40%] left-[18%] w-[11%] h-[11%] cursor-pointer z-50 rounded-full hover:bg-white/20 active:bg-white/40 active:scale-95 transition-all border-2 border-white/20 hover:border-white/50 outline-none shadow-lg"
+                className={`absolute bottom-[40%] left-[18%] ${isMobile ? 'w-[13%] h-[13%]' : 'w-[11%] h-[11%]'} cursor-pointer z-50 rounded-full hover:bg-white/20 active:bg-white/40 active:scale-95 transition-all border-2 border-white/20 hover:border-white/50 outline-none shadow-lg`}
                 onClick={(e) => {
                     console.log("Button clicked");
                     takePhoto();

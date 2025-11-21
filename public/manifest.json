@@ -1,0 +1,24 @@
+{
+    "name": "Retro Camera",
+    "short_name": "Camera",
+    "description": "Retro Polaroid camera app - capture memories with vintage style",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f4f1ea",
+    "theme_color": "#8b7355",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

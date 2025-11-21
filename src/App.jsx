@@ -8,10 +8,21 @@ function App() {
   const [photos, setPhotos] = useState([]);
   const [apiKey, setApiKey] = useState(localStorage.getItem('gemini_api_key') || '');
   const [showSettings, setShowSettings] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('gemini_api_key', apiKey);
   }, [apiKey]);
+
+  useEffect(() => {
+    // Detect mobile device
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handlePhotoEjected = (photo, dropPoint) => {
     // Center the photo on the drop point
@@ -58,21 +69,25 @@ function App() {
   return (
     <div className="w-screen h-screen overflow-hidden bg-[#f4f1ea] relative">
       {/* Title */}
-      <h1 className="absolute top-8 left-1/2 -translate-x-1/2 text-4xl font-handwritten text-gray-800 z-10 pointer-events-none select-none">
-        Bao Retro Camera
-      </h1>
+      {!isMobile && (
+        <h1 className="absolute top-8 left-1/2 -translate-x-1/2 text-4xl font-handwritten text-gray-800 z-10 pointer-events-none select-none">
+          Bao Retro Camera
+        </h1>
+      )}
 
       {/* Instructions */}
-      <div className="absolute bottom-8 right-8 text-right font-handwritten text-gray-600 z-10 pointer-events-none select-none">
-        <p>1. Click the shutter button to take a photo.</p>
-        <p>2. Wait for the photo to eject.</p>
-        <p>3. Drag the photo to the wall!</p>
-        <p>4. Hover to edit caption or download.</p>
-      </div>
+      {!isMobile && (
+        <div className="absolute bottom-8 right-8 text-right font-handwritten text-gray-600 z-10 pointer-events-none select-none">
+          <p>1. Click the shutter button to take a photo.</p>
+          <p>2. Wait for the photo to eject.</p>
+          <p>3. Drag the photo to the wall!</p>
+          <p>4. Hover to edit caption or download.</p>
+        </div>
+      )}
 
       {/* Settings Button */}
       <button
-        className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 z-50"
+        className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 z-50 active:scale-95 transition-transform"
         onClick={() => setShowSettings(!showSettings)}
         title="Settings"
       >
@@ -109,6 +124,7 @@ function App() {
         onCapture={() => { }}
         apiKey={apiKey}
         onCaptionGenerated={handleCaptionGenerated}
+        isMobile={isMobile}
       />
     </div>
   );
